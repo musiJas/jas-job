@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunbox.job.jobexecutor.dao.JobQueueDao">
+
+	<resultMap id="resultJobQueue" type="com.sunbox.job.jobexecutor.model.JobQueue" >
+		<result column="id" property="id" />
+		<result column="packageName" property="packageName" />
+	    <result column="priority" property="priority" />
+		<result column="createTime" property="createTime" />
+		<result column="updateTime" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.id,
+		t.businessId,
+		t.packageName,
+		t.priority,
+		t.createTime,
+		t.updateTime
+	</sql>
+
+	<insert id="save" parameterType="com.sunbox.job.jobexecutor.model.JobQueue" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO  jobqueue (`businessId`,`packageName`, `priority`, `createTime`,`updateTime`)
+		values (#{businessId},#{packageName}, #{priority}, #{createTime},#{updateTime});
+	</insert>
+
+
+	<select id="findList"  resultMap="resultJobQueue">
+		SELECT  <include refid="Base_Column_List" />
+		FROM jobqueue AS t
+		ORDER BY t.priority  desc
+	</select>
+
+    <delete id="removeAllById"  parameterType = "java.util.List">
+		DELETE FROM  jobqueue  WHERE id IN
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>
+</mapper>

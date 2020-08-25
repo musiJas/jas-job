@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunbox.job.jobexecutor.dao.JobMappingDao">
+	
+	<resultMap id="JobMapping" type="com.sunbox.job.jobexecutor.model.JobMapping" >
+		<result column="id" property="id" />
+		<result column="identification" property="identification" />
+		<result column="packageName" property="packageName" />
+	    <result column="priority" property="priority" />
+		<result column="createTime" property="createTime" />
+		<result column="updateTime" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.id,
+		t.identification,
+		t.packageName,
+		t.priority,
+		t.createTime,
+		t.updateTime
+	</sql>
+
+
+	<select id="load"   resultMap="JobMapping">
+		SELECT <include refid="Base_Column_List" />
+		FROM  jobmapping AS t
+		WHERE t.identification=#{identification}
+	</select>
+
+
+	<select id="loadByPackageName"  resultMap="JobMapping">
+		SELECT <include refid="Base_Column_List" />
+		FROM  jobmapping AS t
+		WHERE t.packageName=#{packageName}
+
+	</select>
+</mapper>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sunbox.job.jobexecutor.dao.JobExecutorHistoryDao">
+	
+	<resultMap id="JobExecutorHistory" type="com.sunbox.job.jobexecutor.model.JobExecutorHistory" >
+		<result column="id" property="id" />
+	    <result column="businessId" property="businessId" />
+	    <result column="identification" property="identification" />
+	    <result column="executeStatus" property="executeStatus" />
+		<result column="executeMsg"  property="executeMsg" />
+		<result column="createTime" property="createTime" />
+		<result column="updateTime" property="updateTime" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.id,
+		t.businessId,
+		t.identification,
+		t.executeStatus,
+		t.executeMsg,
+		t.createTime,
+		t.updateTime
+	</sql>
+
+	<select id="findAll" resultMap="JobExecutorHistory">
+		SELECT <include refid="Base_Column_List" />
+		FROM jobexecutorhistory AS t
+		ORDER BY t.updateTime ASC
+	</select>
+
+
+
+	<select id="load" parameterType="java.lang.Integer" resultMap="JobExecutorHistory">
+		SELECT <include refid="Base_Column_List" />
+		FROM jobexecutorhistory AS t
+		WHERE t.id = #{id}
+	</select>
+
+
+	<select id="findObjectByCondition"  resultMap="JobExecutorHistory">
+		SELECT <include refid="Base_Column_List" />
+		FROM jobexecutorhistory AS t
+		WHERE t.businessId = #{businessId} and  t.identification=#{identification} and t.executeStatus = 0
+	</select>
+
+	<insert id="save" parameterType="com.sunbox.job.jobexecutor.model.JobExecutorHistory" useGeneratedKeys="true" keyProperty="id" >
+		INSERT INTO jobexecutorhistory ( `businessId`, `identification`, `executeStatus`, `executeMsg`, `createTime`,`updateTime`)
+		values ( #{businessId}, #{identification}, #{executeStatus}, #{executeMsg}, #{createTime},#{updateTime});
+	</insert>
+
+	<select id="findExecuteJob"  resultMap="JobExecutorHistory">
+		SELECT <include refid="Base_Column_List" />
+		FROM jobexecutorhistory AS t
+		WHERE   t.executeStatus=0
+	</select>
+
+	<select id="findHistory"  resultMap="JobExecutorHistory" parameterType="com.sunbox.job.jobexecutor.model.JobExecutorHistory">
+		select  <include refid="Base_Column_List" />
+		FROM  jobexecutorhistory  AS  t
+		where  t.businessId=#{businessId} order by  t.id  desc
+	</select>
+
+	<update id="updateSuccessByCondition">
+		 update  jobexecutorhistory
+		 set  executeStatus=1 ,updateTime=now()
+		 where businessId=#{businessId} and  identification=#{identification}
+	</update>
+
+	<update id="updateFailByCondition">
+		update  jobexecutorhistory
+		set  executeStatus=1,executeMsg=#{executeMsg},updateTime=now()
+		where businessId=#{businessId} and  identification=#{identification}
+	</update>
+</mapper>
